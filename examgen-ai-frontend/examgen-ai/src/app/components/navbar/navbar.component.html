@@ -1,0 +1,43 @@
+<aside class="sidebar">
+  <!-- Logo -->
+  <div class="sidebar-logo">
+    <div class="logo-icon">
+      <i class="fas fa-graduation-cap"></i>
+    </div>
+    <div class="logo-text">
+      <span class="logo-name">ExamGen</span>
+      <span class="logo-tag">AI</span>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="sidebar-nav">
+    <p class="nav-label">Navigation</p>
+    <ul class="nav-list">
+      <li *ngFor="let item of navItems">
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          class="nav-item"
+        >
+          <span class="nav-icon">
+            <i class="fas {{ item.icon }}"></i>
+          </span>
+          <span class="nav-label-text">{{ item.label }}</span>
+          <span class="nav-active-bar"></span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Footer -->
+  <div class="sidebar-footer">
+    <div class="sidebar-footer-inner">
+      <div class="user-avatar">AI</div>
+      <div class="user-info">
+        <span class="user-name">Admin</span>
+        <span class="user-role">Teacher</span>
+      </div>
+    </div>
+  </div>
+</aside>

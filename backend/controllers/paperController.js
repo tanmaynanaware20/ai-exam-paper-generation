@@ -1,4 +1,6 @@
 import db from '../db.js';
+import fs from 'fs';
+import pdf from 'pdf-parse';
 
 export const uploadPaper = async (req, res) => {
   try {
@@ -11,15 +13,26 @@ export const uploadPaper = async (req, res) => {
     const fileName = req.file.originalname;
     const filePath = req.file.path;
 
+    let extractedText = '';
+
+    if (fileName.toLowerCase().endsWith('.pdf')) {
+      const dataBuffer = fs.readFileSync(filePath);
+      const pdfData = await pdf(dataBuffer);
+      extractedText = pdfData.text;
+    } else {
+      extractedText = fileName;
+    }
+
     await db.query(
       'INSERT INTO old_papers(subject, paper_text) VALUES($1,$2)',
-      ['DBMS', fileName]
+      ['DBMS', extractedText]
     );
 
     res.json({
       message: 'Paper uploaded successfully',
       fileName,
-      filePath
+      filePath,
+      extractedText
     });
 
   } catch (error) {
@@ -71,11 +84,12 @@ export const getPaperById = async (req, res) => {
 export const updatePaper = async (req, res) => {
   try {
     const { id, subject, paper_text } = req.body;
+
     if (!id) {
-  return res.status(400).json({
-    error: 'Id is required'
-  });
-}
+      return res.status(400).json({
+        error: 'Id is required'
+      });
+    }
 
     const result = await db.query(
       'UPDATE old_papers SET subject=$1, paper_text=$2 WHERE id=$3 RETURNING *',
@@ -103,11 +117,12 @@ export const updatePaper = async (req, res) => {
 export const deletePaper = async (req, res) => {
   try {
     const { id } = req.body;
+
     if (!id) {
-  return res.status(400).json({
-    error: 'Id is required'
-  });
-}
+      return res.status(400).json({
+        error: 'Id is required'
+      });
+    }
 
     const result = await db.query(
       'DELETE FROM old_papers WHERE id=$1 RETURNING *',

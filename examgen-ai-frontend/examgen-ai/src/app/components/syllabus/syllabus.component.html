@@ -1,0 +1,164 @@
+<div class="syllabus-page fade-in-up">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">
+        <span class="title-icon"><i class="fas fa-book-open"></i></span>
+        Upload Syllabus
+      </h1>
+      <p class="page-subtitle">Upload your syllabus file and get an AI-generated question paper instantly.</p>
+    </div>
+  </div>
+
+  <div class="syllabus-layout">
+
+    <!-- Upload Panel -->
+    <div class="syllabus-form card">
+      <h2 class="panel-title">Syllabus File</h2>
+
+      <!-- Alerts -->
+      <div class="alert alert-error" *ngIf="errorMsg">
+        <i class="fas fa-exclamation-circle"></i> {{ errorMsg }}
+      </div>
+      <div class="alert alert-success" *ngIf="successMsg">
+        <i class="fas fa-check-circle"></i> {{ successMsg }}
+      </div>
+
+      <!-- Drop Zone -->
+      <div
+        class="drop-zone"
+        [class.drag-over]="isDragOver"
+        [class.has-file]="selectedFile"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave()"
+        (drop)="onDrop($event)"
+        (click)="fileInput.click()"
+      >
+        <input
+          #fileInput
+          type="file"
+          accept=".pdf,.doc,.docx,.txt"
+          (change)="onFileSelect($event)"
+          style="display:none"
+        />
+
+        <div class="drop-empty" *ngIf="!selectedFile">
+          <div class="drop-icon">
+            <i class="fas fa-book"></i>
+          </div>
+          <p class="drop-primary">Upload your syllabus</p>
+          <p class="drop-secondary">Drag & drop or <span class="drop-browse">browse</span></p>
+          <p class="drop-formats">PDF, DOC, DOCX, TXT supported</p>
+        </div>
+
+        <div class="drop-file-info" *ngIf="selectedFile" (click)="$event.stopPropagation()">
+          <div class="file-icon">
+            <i class="fas fa-book-open"></i>
+          </div>
+          <div class="file-details">
+            <span class="file-name">{{ selectedFile.name }}</span>
+            <span class="file-size">{{ formatSize(selectedFile) }}</span>
+          </div>
+          <button class="file-remove" (click)="removeFile()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- How It Works -->
+      <div class="how-it-works">
+        <p class="how-title">How it works</p>
+        <div class="how-steps">
+          <div class="how-step">
+            <span class="how-num">1</span>
+            <span>Upload your syllabus file (PDF or DOC)</span>
+          </div>
+          <div class="how-step">
+            <span class="how-num">2</span>
+            <span>AI analyzes topics & structure</span>
+          </div>
+          <div class="how-step">
+            <span class="how-num">3</span>
+            <span>Get a complete question paper</span>
+          </div>
+        </div>
+      </div>
+
+      <button
+        class="btn btn-primary btn-lg upload-btn"
+        [disabled]="!selectedFile || isUploading"
+        (click)="upload()"
+      >
+        <span *ngIf="!isUploading">
+          <i class="fas fa-bolt"></i> Process Syllabus
+        </span>
+        <span *ngIf="isUploading" class="loading-inner">
+          <span class="spinner"></span> AI Processing...
+        </span>
+      </button>
+    </div>
+
+    <!-- Output Panel -->
+    <div class="syllabus-output">
+
+      <!-- Empty -->
+      <div class="output-empty card" *ngIf="!generatedText && !isUploading">
+        <div class="empty-visual">
+          <div class="empty-circle">
+            <i class="fas fa-book-open"></i>
+          </div>
+        </div>
+        <h3>Output will appear here</h3>
+        <p>Upload a syllabus file and click <strong>Process Syllabus</strong> to generate a paper.</p>
+      </div>
+
+      <!-- Loading -->
+      <div class="output-loading card" *ngIf="isUploading">
+        <div class="loading-animation">
+          <div class="pulse-ring"></div>
+          <div class="pulse-ring delay-1"></div>
+          <i class="fas fa-brain loading-brain"></i>
+        </div>
+        <h3>Analyzing syllabus...</h3>
+        <p>AI is reading topics and generating questions</p>
+      </div>
+
+      <!-- Result -->
+      <div class="output-result card" *ngIf="generatedText && !isUploading">
+        <div class="output-header">
+          <h3 class="output-title">
+            <i class="fas fa-check-circle success-icon"></i>
+            Generated from Syllabus
+          </h3>
+          <div class="output-actions">
+            <button class="btn btn-secondary btn-sm" (click)="copyToClipboard()">
+              <i class="fas fa-copy"></i> Copy
+            </button>
+            <button
+              class="btn btn-teal btn-sm"
+              (click)="downloadPdf()"
+              [disabled]="isPdfLoading"
+            >
+              <span *ngIf="!isPdfLoading"><i class="fas fa-file-pdf"></i> Download PDF</span>
+              <span *ngIf="isPdfLoading"><span class="spinner"></span> Exporting...</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="output-content">
+          <pre class="output-text">{{ generatedText }}</pre>
+        </div>
+
+        <div class="output-footer">
+          <span><i class="fas fa-robot"></i> Generated from your syllabus</span>
+          <button class="btn btn-primary btn-sm" (click)="useForGenerate()">
+            <i class="fas fa-magic"></i> Go to Generate
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

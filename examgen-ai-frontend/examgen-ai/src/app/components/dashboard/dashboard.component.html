@@ -1,0 +1,99 @@
+<div class="dashboard fade-in-up">
+
+  <!-- Header -->
+  <header class="dash-header">
+    <div class="dash-header-left">
+      <h1 class="dash-title">Dashboard</h1>
+      <p class="dash-subtitle">Welcome back — let's generate something great today.</p>
+    </div>
+    <button class="btn btn-primary btn-lg" (click)="navigate('/generate')">
+      <i class="fas fa-magic"></i> Generate Paper
+    </button>
+  </header>
+
+  <!-- Quick Actions -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">Quick Actions</h2>
+      <p class="section-sub">Jump into any feature</p>
+    </div>
+    <div class="quick-grid">
+      <div
+        class="quick-card"
+        *ngFor="let card of quickCards; let i = index"
+        [style.animation-delay]="(i * 0.1) + 's'"
+        (click)="navigate(card.route)"
+      >
+        <div class="qcard-top">
+          <div class="qcard-icon" [ngClass]="'qcard-icon--' + card.color">
+            <i class="fas {{ card.icon }}"></i>
+          </div>
+          <span class="badge badge-blue" *ngIf="card.badge">{{ card.badge }}</span>
+        </div>
+        <h3 class="qcard-title">{{ card.title }}</h3>
+        <p class="qcard-desc">{{ card.description }}</p>
+        <div class="qcard-arrow">
+          <i class="fas fa-arrow-right"></i>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">Platform Features</h2>
+    </div>
+    <div class="features-row">
+      <div class="feature-pill" *ngFor="let f of features">
+        <span class="feat-emoji">{{ f.icon }}</span>
+        <div>
+          <div class="feat-label">{{ f.label }}</div>
+          <div class="feat-desc">{{ f.desc }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo Flow Banner -->
+  <section class="flow-banner">
+    <h3 class="flow-title">Full Demo Flow</h3>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <span>Dashboard</span>
+      </div>
+      <i class="fas fa-chevron-right flow-arrow"></i>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <span>Generate Paper</span>
+      </div>
+      <i class="fas fa-chevron-right flow-arrow"></i>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <span>AI Output</span>
+      </div>
+      <i class="fas fa-chevron-right flow-arrow"></i>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <span>Download PDF</span>
+      </div>
+      <i class="fas fa-chevron-right flow-arrow"></i>
+      <div class="flow-step">
+        <div class="flow-num">5</div>
+        <span>History</span>
+      </div>
+      <i class="fas fa-chevron-right flow-arrow"></i>
+      <div class="flow-step">
+        <div class="flow-num">6</div>
+        <span>Upload Papers</span>
+      </div>
+      <i class="fas fa-chevron-right flow-arrow"></i>
+      <div class="flow-step">
+        <div class="flow-num">7</div>
+        <span>Syllabus</span>
+      </div>
+    </div>
+  </section>
+
+</div>

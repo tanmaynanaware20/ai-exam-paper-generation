@@ -1,0 +1,173 @@
+<div class="generate-page fade-in-up">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">
+        <span class="title-icon"><i class="fas fa-magic"></i></span>
+        Generate Exam Paper
+      </h1>
+      <p class="page-subtitle">
+        Enter subject directly or upload old papers for AI-based prediction.
+      </p>
+    </div>
+  </div>
+
+  <div class="gen-layout">
+
+    <!-- LEFT PANEL -->
+    <div class="gen-form-panel card">
+      <h2 class="panel-title">Paper Configuration</h2>
+
+      <!-- Alerts -->
+      <div class="alert alert-error" *ngIf="errorMsg">
+        <i class="fas fa-exclamation-circle"></i> {{ errorMsg }}
+      </div>
+
+      <div class="alert alert-success" *ngIf="successMsg">
+        <i class="fas fa-check-circle"></i> {{ successMsg }}
+      </div>
+
+      <!-- Upload Old Paper -->
+      <div class="form-group">
+        <label>Upload Previous Question Paper (Optional)</label>
+
+        <input
+          type="file"
+          class="form-control"
+          (change)="onFileUpload($event)"
+        />
+
+        <small *ngIf="uploadedFileName">
+          📄 Uploaded: {{ uploadedFileName }}
+        </small>
+
+        <small class="upload-note">
+          If no file is uploaded, AI will generate paper using subject only.
+        </small>
+      </div>
+
+      <!-- Subject -->
+      <div class="form-group">
+        <label>Subject / Topic</label>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="e.g. DBMS, DSBDA, CN, TOC..."
+          [(ngModel)]="subject"
+          (keyup.enter)="generate()"
+        />
+      </div>
+
+      <!-- Difficulty -->
+      <div class="form-group">
+        <label>Difficulty Level</label>
+
+        <div class="difficulty-selector">
+          <button
+            *ngFor="let opt of difficultyOptions"
+            class="diff-btn"
+            [class.active]="difficulty === opt.value"
+            [attr.data-level]="opt.value"
+            (click)="difficulty = opt.value"
+            type="button"
+          >
+            <span class="diff-emoji">{{ opt.icon }}</span>
+            <span>{{ opt.label }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Marks -->
+      <div class="form-group">
+        <label>Total Marks</label>
+
+        <div class="marks-selector">
+          <button
+            *ngFor="let m of marksOptions"
+            class="marks-btn"
+            [class.active]="marks === m"
+            (click)="marks = m"
+            type="button"
+          >
+            {{ m }} Marks
+          </button>
+        </div>
+      </div>
+
+      <!-- AI Status -->
+      <div class="config-summary" *ngIf="uploadedPaperText">
+        <div class="summary-row">
+          <span class="summary-label">AI Status</span>
+          <span class="summary-value">Analyzed old paper successfully</span>
+        </div>
+      </div>
+
+      <!-- Generate Button -->
+      <button
+        class="btn btn-primary btn-lg generate-btn"
+        [disabled]="!isFormValid || isLoading"
+        (click)="generate()"
+      >
+        <span *ngIf="!isLoading">
+          <i class="fas fa-wand-magic-sparkles"></i>
+          Generate Predicted Paper
+        </span>
+
+        <span *ngIf="isLoading">
+          <span class="spinner"></span>
+          Analyzing + Generating...
+        </span>
+      </button>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="gen-output-panel">
+
+      <!-- Empty -->
+      <div class="output-empty card" *ngIf="!generatedText && !isLoading">
+        <h3>Your predicted paper will appear here</h3>
+        <p>
+          Enter subject or upload previous paper to generate AI-based exam paper.
+        </p>
+      </div>
+
+      <!-- Loading -->
+      <div class="output-loading card" *ngIf="isLoading">
+        <h3>AI is analyzing previous papers...</h3>
+        <p>
+          Generating {{ marks }}-mark {{ difficulty }} paper for {{ subject }}
+        </p>
+      </div>
+
+      <!-- Output -->
+      <div class="output-result card" *ngIf="generatedText && !isLoading">
+
+        <div class="output-header">
+          <h3>Generated Predicted Paper</h3>
+
+          <div class="output-actions">
+            <button class="btn btn-secondary btn-sm" (click)="copyToClipboard()">
+              Copy
+            </button>
+
+            <button class="btn btn-secondary btn-sm" (click)="clearOutput()">
+              Clear
+            </button>
+
+            <button class="btn btn-teal btn-sm" (click)="downloadPdf()">
+              Download PDF
+            </button>
+          </div>
+        </div>
+
+        <div class="output-content">
+          <pre class="output-text">{{ generatedText }}</pre>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>

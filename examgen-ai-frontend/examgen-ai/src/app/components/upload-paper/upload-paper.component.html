@@ -1,0 +1,139 @@
+<div class="upload-page fade-in-up">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">
+        <span class="title-icon"><i class="fas fa-upload"></i></span>
+        Upload Previous Papers
+      </h1>
+      <p class="page-subtitle">Upload old exam papers to analyze patterns and repeated questions.</p>
+    </div>
+  </div>
+
+  <div class="upload-layout">
+
+    <!-- Upload Form -->
+    <div class="upload-form-panel card">
+      <h2 class="panel-title">Upload New Paper</h2>
+
+      <!-- Alerts -->
+      <div class="alert alert-error" *ngIf="errorMsg">
+        <i class="fas fa-exclamation-circle"></i> {{ errorMsg }}
+      </div>
+      <div class="alert alert-success" *ngIf="successMsg">
+        <i class="fas fa-check-circle"></i> {{ successMsg }}
+      </div>
+
+      <!-- Drop Zone -->
+      <div
+        class="drop-zone"
+        [class.drag-over]="isDragOver"
+        [class.has-file]="selectedFile"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave()"
+        (drop)="onDrop($event)"
+        (click)="fileInput.click()"
+      >
+        <input
+          #fileInput
+          type="file"
+          accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+          (change)="onFileSelect($event)"
+          style="display:none"
+        />
+
+        <div class="drop-empty" *ngIf="!selectedFile">
+          <div class="drop-icon">
+            <i class="fas fa-cloud-upload-alt"></i>
+          </div>
+          <p class="drop-primary">Drag & drop your file here</p>
+          <p class="drop-secondary">or <span class="drop-browse">click to browse</span></p>
+          <p class="drop-formats">PDF, DOC, DOCX, PNG, JPG supported</p>
+        </div>
+
+        <div class="drop-file-info" *ngIf="selectedFile" (click)="$event.stopPropagation()">
+          <div class="file-icon">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <div class="file-details">
+            <span class="file-name">{{ selectedFile.name }}</span>
+            <span class="file-size">{{ formatSize(selectedFile) }}</span>
+          </div>
+          <button class="file-remove" (click)="removeFile()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Subject -->
+      <div class="form-group">
+        <label>Subject Name</label>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="e.g. Mathematics, Physics, DBMS..."
+          [(ngModel)]="subject"
+        />
+      </div>
+
+      <button
+        class="btn btn-primary btn-lg upload-btn"
+        [disabled]="!isFormValid || isUploading"
+        (click)="upload()"
+      >
+        <span *ngIf="!isUploading">
+          <i class="fas fa-cloud-upload-alt"></i> Upload Paper
+        </span>
+        <span *ngIf="isUploading" class="loading-inner">
+          <span class="spinner"></span> Uploading...
+        </span>
+      </button>
+    </div>
+
+    <!-- Paper List -->
+    <div class="paper-list-panel">
+      <div class="list-header">
+        <h2 class="panel-title">
+          <i class="fas fa-folder-open"></i> Uploaded Papers
+        </h2>
+        <button class="btn btn-secondary btn-sm" (click)="loadPaperList()" [disabled]="isLoadingList">
+          <i class="fas fa-sync-alt" [class.fa-spin]="isLoadingList"></i>
+        </button>
+      </div>
+
+      <!-- Loading -->
+      <div class="loading-state card" *ngIf="isLoadingList">
+        <span class="spinner"></span>
+        <p>Loading papers...</p>
+      </div>
+
+      <!-- Empty -->
+      <div class="empty-state card" *ngIf="!isLoadingList && paperList.length === 0">
+        <div class="empty-icon">📂</div>
+        <h3>No papers uploaded</h3>
+        <p>Uploaded papers will appear here.</p>
+      </div>
+
+      <!-- List -->
+      <div class="paper-cards" *ngIf="!isLoadingList && paperList.length > 0">
+        <div
+          class="paper-card card"
+          *ngFor="let paper of paperList; let i = index"
+          [style.animation-delay]="(i * 0.06) + 's'"
+        >
+          <div class="paper-card-icon">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <div class="paper-card-info">
+            <span class="paper-subject">{{ paper.subject }}</span>
+            <span class="paper-filename">{{ paper.file_name }}</span>
+          </div>
+          <span class="id-badge">#{{ paper.id }}</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

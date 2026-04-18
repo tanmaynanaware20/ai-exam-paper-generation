@@ -1,26 +1,36 @@
 import axios from 'axios';
-import db from '../db.js';
 
 export const generatePaper = async (req, res) => {
   try {
-    const { prompt, difficulty, marks } = req.body;
+    const { subject, difficulty, totalMarks, oldPaperText } = req.body;
 
-    if (!prompt) {
+    if (!subject) {
       return res.status(400).json({
-        error: 'Prompt is required'
+        error: 'Subject is required'
       });
     }
 
-    const finalPrompt = `
-Generate university exam paper for subject ${prompt}
+    const safePaperText = (oldPaperText || '').slice(0, 1500);
 
-Rules:
-- Difficulty: ${difficulty || 'medium'}
-- Total Marks: ${marks || 30}
-- 5 Questions
-- University format
-- Numbered questions
-- Marks beside each question
+    const finalPrompt = `
+STRICT RULE:
+Depend ONLY on uploaded paper content.
+Never mix other subject topics.
+
+Uploaded paper:
+${safePaperText}
+
+Subject: ${subject}
+Difficulty: ${difficulty}
+Marks: ${totalMarks}
+
+Generate:
+
+SECTION A: Important Topics To Revise
+SECTION B: Best Revision Exam Paper
+SECTION C: Last Minute Study Focus
+
+Only use uploaded paper topics.
 `;
 
     const response = await axios.post(
@@ -38,27 +48,23 @@ Rules:
         headers: {
           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
           'Content-Type': 'application/json'
-        }
+        },
+        timeout: 20000
       }
     );
 
     const generatedText =
-      response.data.choices[0].message.content;
-
-    const result = await db.query(
-      'INSERT INTO generated_papers(prompt, generated_text) VALUES($1,$2) RETURNING *',
-      [finalPrompt, generatedText]
-    );
+      response.data?.choices?.[0]?.message?.content || 'No content generated';
 
     res.json({
-      id: result.rows[0].id,
-      prompt: finalPrompt,
       generatedText
     });
 
   } catch (error) {
     res.status(500).json({
-      error: error.message
+      error:
+        error.response?.data?.error?.message ||
+        error.message
     });
   }
 };
