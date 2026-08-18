@@ -34,8 +34,10 @@ export async function initDb() {
       };
       return dbAdapter;
     } catch (pgErr) {
-      console.warn('⚠️ PostgreSQL connection failed, falling back to local database adapter:', pgErr.message);
+      console.log('📦 Using Zero-Config Local Embedded Database (PostgreSQL URL not set or unreachable)');
     }
+  } else {
+    console.log('📦 Using Zero-Config Local Embedded Database (SQLite)');
   }
 
   // SQLite Fallback
