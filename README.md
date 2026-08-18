@@ -63,9 +63,9 @@
    - **Build Command**: `npm install`
    - **Start Command**: `node server.js`
 5. Add Environment Variables in Render settings:
-   - `OPENROUTER_API_KEY`: `your_openrouter_api_key_here`
+   - `OPENROUTER_API_KEY`: `sk-or-v1-your_openrouter_api_key`
    - `PORT`: `5000`
-   - `DATABASE_URL`: *(Your PostgreSQL database connection string)*
+   - *(Leave `DATABASE_URL` empty / unset — EXAM-AI uses zero-config embedded database automatically!)*
 6. Click **Deploy Web Service**.
 
 ---
