@@ -43,23 +43,26 @@ export class GenerateComponent {
     if (!file) return;
 
     const formData = new FormData();
-    formData.append('file', file);
+
+    // IMPORTANT FIX
+    formData.append('paper', file);
 
     this.api.uploadPaper(formData).subscribe({
       next: (res: any) => {
         this.uploadedPaperText = res.extractedText || '';
-        this.uploadedFileName = res.fileName || '';
+        this.uploadedFileName = res.filename || '';
 
-        this.successMsg = 'Old paper analyzed successfully!';
+        this.successMsg = 'Upload successful';
         this.errorMsg = '';
 
-        console.log('UPLOADED TEXT:', this.uploadedPaperText);
+        console.log('UPLOAD RESPONSE:', res);
 
         setTimeout(() => {
           this.successMsg = '';
         }, 3000);
       },
-      error: () => {
+      error: (err) => {
+        console.log('UPLOAD ERROR:', err);
         this.errorMsg = 'Upload failed';
       }
     });
@@ -67,8 +70,6 @@ export class GenerateComponent {
 
   generate(): void {
     if (!this.isFormValid || this.isLoading) return;
-
-    console.log('GENERATE CLICKED');
 
     this.isLoading = true;
     this.generatedText = '';
@@ -82,24 +83,18 @@ export class GenerateComponent {
       oldPaperText: this.uploadedPaperText || ''
     };
 
-    console.log('Sending payload:', payload);
-
     this.api.generatePaper(payload).subscribe({
       next: (res: any) => {
-        console.log('RESPONSE RECEIVED:', res);
-
         this.generatedText = res.generatedText || '';
         this.isLoading = false;
 
-        this.successMsg = 'Paper generated successfully!';
+        this.successMsg = 'Paper generated successfully';
 
         setTimeout(() => {
           this.successMsg = '';
         }, 3000);
       },
       error: (err: any) => {
-        console.log('FULL ERROR:', err);
-
         this.errorMsg =
           err?.error?.error ||
           err?.error?.message ||
@@ -144,14 +139,12 @@ export class GenerateComponent {
   }
 
   copyToClipboard(): void {
-    if (!this.generatedText) return;
+    navigator.clipboard.writeText(this.generatedText);
 
-    navigator.clipboard.writeText(this.generatedText).then(() => {
-      this.successMsg = 'Copied to clipboard!';
+    this.successMsg = 'Copied to clipboard';
 
-      setTimeout(() => {
-        this.successMsg = '';
-      }, 2000);
-    });
+    setTimeout(() => {
+      this.successMsg = '';
+    }, 2000);
   }
 }
